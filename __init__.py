@@ -3,15 +3,16 @@ import os
 import server
 import glob
 def list_image_files(directory):
-    # List of common image file extensions
+  
     image_extensions = ['*.jpg', '*.jpeg', '*.png', '*.gif', '*.bmp', '*.tiff', '*.tif', '*.webp']
     
-    # Initialize an empty list to store image file paths
+ 
     image_files = []
 
     # Loop through each extension and use glob to find matching files
     for extension in image_extensions:
-        image_files.extend(glob.glob(os.path.join(directory, extension)))
+        # Extend the list with just the file names
+        image_files.extend([os.path.basename(file) for file in glob.glob(os.path.join(directory, extension))])
     
     return image_files
 from aiohttp import web
