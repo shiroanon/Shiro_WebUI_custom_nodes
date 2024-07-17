@@ -7,7 +7,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 
 outputs_dir = os.path.join(current_dir, '..', 'outputs')
 
-CATEGORY = "api/image"
+CATEGORY = "api/outputs"
 outputs_dir = os.path.normpath(outputs_dir)
 def list_image_files(directory):
    
