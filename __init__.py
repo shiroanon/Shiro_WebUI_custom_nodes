@@ -32,13 +32,13 @@ from aiohttp import web
 @server.PromptServer.instance.routes.get("/outputs")
 async def get_outputs_img_name(request):
     return web.json_response(list_image_files("output"))
-@server.router.post("/outputs/{filename}")
+@server.router.delete("/outputs/{filename}")
 async def delete_output_img_name(request):
     filename = request.match_info['filename']
     if delete_image_file("output", filename):
         return web.json_response({'status': 'success', 'message': f'File {filename} deleted successfully.'})
     else:
-        return web.json_response({'status': 'error', 'message': f'File {filename} not found.'}, status=200)
+        return web.json_response({'status': 'error', 'message': f'File {filename} not found.'}, status=404)
 
 
 __all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
