@@ -2,6 +2,19 @@ from .out_request import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
 import os
 import server
 import glob
+from PIL import Image
+from pathlib import Path
+
+COMPRESSED_DIR = Path('compressed_images')
+COMPRESSED_DIR.mkdir(exist_ok=True)
+
+# Function to create a compressed version of the image
+def create_compressed_image(image_path, compressed_path):
+    with Image.open(image_path) as img:
+        img = img.convert("RGB")
+        img.thumbnail((800, 800), Image.ANTIALIAS)  # Resize the image to a maximum of 800x800
+        img.save(compressed_path, "JPEG", quality=50)  # Save as JPEG with 70% quality
+
 def delete_image_file(directory, filename):
     image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.tif', '.webp']
     for ext in image_extensions:
@@ -40,5 +53,18 @@ async def delete_output_img_name(request):
     else:
         return web.json_response({'status': 'error', 'message': f'File {filename} not found.'}, status=404)
 
+# Endpoint to serve compressed image
+@server.PromptServer.instance.routes.get("/compressed/{filename}")
+async def serve_compressed_image(request):
+    filename = request.match_info['filename']
+    image_path = Path('output') / filename
+    compressed_path = COMPRESSED_DIR / filename
 
+    if not compressed_path.exists():
+        if image_path.exists():
+            create_compressed_image(image_path, compressed_path)
+        else:
+            return web.json_response({'status': 'error', 'message': f'File {filename} not found.'}, status=404)
+
+    return web.FileResponse(compressed_path)
 __all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
