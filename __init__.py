@@ -18,7 +18,7 @@ def create_compressed_image(image_path, compressed_path):
 def delete_image_file(directory, filename):
     image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.tif', '.webp']
     for ext in image_extensions:
-        file_path = os.path.join(directory, filename + ext)
+        file_path = os.path.join(directory, filename)
         if os.path.exists(file_path):
             os.remove(file_path)
             return True
