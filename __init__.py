@@ -53,7 +53,24 @@ async def serve_image_list(request):
         {'file_list': file_list},
         status=200
     )
+@server.PromptServer.instance.routes.get("/shiro/image/search/{search_string}")
+async def search_image_by_filename(request: web.Request) -> web.Response:
+    search_string = request.match_info.get('search_string', None)
+    if not search_string:
+        return web.json_response(
+            {'status': 'error', 'message': 'Search string parameter is required.'},
+            status=400
+        )
 
+    file_list = []
+    for f in glob.glob(str(IMAGE_DIRECTORY / '*')):
+        file_name = os.path.basename(f)
+        if file_name.startswith(search_string):
+            file_list.append(file_name)
+    return web.json_response(
+        {'file_list': file_list},
+        status=200
+    )
 @server.PromptServer.instance.routes.get("/shiro/image/{filename}")
 async def serve_image_by_filename(request: web.Request) -> web.Response:
     filename = request.match_info.get('filename', None)
