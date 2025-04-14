@@ -44,7 +44,15 @@ async def serve_image(request):
         return web.FileResponse(IMAGE_PATH)
     else:
         return web.json_response({'status': 'error', 'message': 'Image not found.'}, status=404)
-
+@server.PromptServer.instance.routes.get("/shiro/image")
+async def serve_image_list(request):
+    file_list = []
+    for f in glob.glob(str(IMAGE_DIRECTORY / '*')):
+        file_list.append(os.path.basename(f))
+    return web.json_response(
+        {'file_list': file_list},
+        status=200
+    )
 
 @server.PromptServer.instance.routes.get("/shiro/image/{filename}")
 async def serve_image_by_filename(request: web.Request) -> web.Response:
